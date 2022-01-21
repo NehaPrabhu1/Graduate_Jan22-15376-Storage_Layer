@@ -23,7 +23,28 @@ Output:
            2 | Paul       | Anderson     | 1970-06-26    | American
 (16 rows)
 
-2. Return the first names, last names and date of births of the 10 youngest female actors.
+2. Return the distinct nationalities from the directors table.
+Query:
+select distinct(nationality) from directors;
+
+Output:
+moviedb=# select distinct(nationality) from directors;
+ nationality
+--------------
+ Chinese
+ American
+ Japanese
+ Australian
+ German
+ Mexican
+ Brazilian
+ French
+ British
+ Swedish
+ South Korean
+(11 rows)
+
+3. Return the first names, last names and date of births of the 10 youngest female actors.
 Query:
 select first_name, last_name, date_of_birth from actors where gender='F' order by date_of_birth desc limit 10;
 
@@ -42,7 +63,7 @@ Output:
  Alice      | Braga       | 1983-04-15
 (10 rows)
 
-3. Return the top 3 movies with the highest international takings.
+4. Return the top 3 movies with the highest international takings.
 Query:
 moviedb=# select movie_name from movies where movie_id in (select movie_id from movie_revenues order by international_takings desc limit 3);
 
@@ -55,7 +76,7 @@ Output:
 (3 rows)
 
 
-4. Concatenate the first and last names of the directors spearated by a space, and call this new column full_name.
+5. Concatenate the first and last names of the directors spearated by a space, and call this new column full_name.
 Query:
 moviedb=# select concat(first_name,' ',last_name) as full_name from directors;
 
@@ -101,7 +122,7 @@ Output:
  Yimou Zhang
 (37 rows)
 
-5. Return the actors with missing first_names or data_of_births.
+6. Return the actors with missing first_names or data_of_births.
 Query:
 moviedb=# select * from actors where first_name is NULL or date_of_birth is NULL;
 
@@ -112,7 +133,7 @@ Output;
        46 | Xian       | Gao       | M      |
 (2 rows)
 
-6. Count the number of actors born after the 1st January 1970.
+7. Count the number of actors born after the 1st January 1970.
 Query:
 moviedb=# select count(actor_id) from actors where date_of_birth >= '1970-01-01';
 
@@ -122,7 +143,7 @@ Output:
     55
 (1 row)
 
-7. What was the highest and lowest domestic takings for a movie.
+8. What was the highest and lowest domestic takings for a movie.
 Query:
 moviedb=# select max(domestic_takings), min(domestic_takings) from movie_revenues;
 
@@ -132,7 +153,7 @@ Output:
  659.20 | 0.30
 (1 row)
 
-8. What is the sum total movie length for movies rated 15.
+9. What is the sum total movie length for movies rated 15.
 Query:
 moviedb=# select sum(movie_length) from movies where age_certificate='15';
 
@@ -142,20 +163,18 @@ Output:
  2184
 (1 row)
 
-9. How many Japanese directors are in the directors table.
+10. How many Japanese directors are in the directors table.
 Query:
-moviedb=# select * from directors where nationality = 'Japanese';
+moviedb=# select count(*) from directors where nationality = 'Japanese';
 
 Output:
- director_id | first_name | last_name | date_of_birth | nationality
--------------+------------+-----------+---------------+-------------
-          10 | Kinji      | Fukasaku  | 1930-07-03    | Japanese
-          21 | Hayao      | Miyazaki  | 1941-01-05    | Japanese
-          30 | Sion       | Sono      | 1961-12-18    | Japanese
-(3 rows)
+ count
+-------
+     3
+(1 row)
 
-10. What is the average movie length for chinese movies.
-Query:
+11. What is the average movie length for chinese movies.
+Query
 moviedb=# select avg(movie_length) from movies where movie_lang = 'Chinese';
 
 Output:
@@ -164,7 +183,7 @@ Output:
  121.8000000000000000
 (1 row)
 
-11. How many directors are there per nationality?
+12. How many directors are there per nationality?
 Query:
 moviedb=# select nationality, count(*) from directors group by nationality order by nationality;
 
@@ -184,7 +203,7 @@ Output:
  Swedish      |     1
 (11 rows)
 
-12. What is the sum total movie_length for each age certificate and movie language combination?
+13. What is the sum total movie_length for each age certificate and movie language combination?
 Query:
 moviedb=# select movie_lang, age_certificate, sum(movie_length) from movies group by movie_lang, age_certificate order by movie_lang;
 
@@ -208,7 +227,7 @@ Output:
  Swedish    | 15              |  128
 (15 rows)
 
-13. Return the movie languages which have a sum total movie length of over 500 minutes.
+14. Return the movie languages which have a sum total movie length of over 500 minutes.
 Query:
 moviedb=# select movie_lang, sum(movie_length) from movies group by movie_lang having sum(movie_length)>500;
 
@@ -219,7 +238,7 @@ Output:
  English    | 4824
 (2 rows)
 
-14. Select the directors first and last names, the movie names, and release dates for all Chinese, Korean, and Japanese movies.
+15. Select the directors first and last names, the movie names, and release dates for all Chinese, Korean, and Japanese movies.
 Query:
 moviedb=# select first_name, last_name, movie_name, release_date from directors, movies where movies.director_id = directors.director_id and nationality in ('Chinese', 'Korean', 'Japanese');
 
@@ -239,24 +258,7 @@ Output:
 (10 rows)
 
 
-moviedb=# select first_name||' '||last_name as Director, movie_name, release_date from directors, movies where movies.director_id = directors.director_id and nationality in ('Chinese', 'Korean', 'Japanese');
-
-Output:
-    director     |          movie_name           | release_date
------------------+-------------------------------+--------------
- Kinji Fukasaku  | Battle Royale                 | 2001-01-04
- Kar Wai Wong    | Chungking Express             | 1996-08-03
- Sion Sono       | Cold Fish                     | 2010-09-12
- Ang Lee         | Crouching Tiger Hidden Dragon | 2000-07-06
- Yimou Zhang     | House of Flying Daggers       | 2004-03-12
- Kar Wai Wong    | In the Mood for Love          | 2001-02-02
- Ang Lee         | Life of Pi                    | 2012-11-21
- Hayao  Miyazaki | Ponyo                         | 2009-08-14
- Hayao  Miyazaki | Spirited Away                 | 2001-06-19
- Bruce Lee       | Way of the Dragon             | 1972-06-01
-(10 rows)
-
-15. Select the movie names, release dates & international takings of all English language movies.
+16. Select the movie names, release dates & international takings of all English language movies.
 Query:
 moviedb=# select movie_name, release_date, international_takings from movies, movie_revenues where movies.movie_id = movie_revenues.movie_id and movie_lang = 'English';
 
@@ -303,9 +305,9 @@ Output:
  Three Billboards Outside Ebbing, Missouri  | 2017-11-10   |                104.70
 (38 rows)
 
-16. Select the movie names, domestic takings and international takings for all movies with either missing domestic takings or missing international takings and order the results by movie name.
+17. Select the movie names, domestic takings and international takings for all movies with either missing domestic takings or missing international takings and order the results by movie name.
 Query:
-moviedb=# select movie_name, domestic_takings, international_takings from movies, movie_revenues where movies.movie_id = movie_revenues.movie_id and (domestic_takings is NULL or international_takings is NULL);
+moviedb=# select movie_name, domestic_takings, international_takings from movies, movie_revenues where movies.movie_id = movie_revenues.movie_id and (domestic_takings is NULL or international_takings is NULL) order by movie_name;
 
 Output:
      movie_name     | domestic_takings | international_takings
@@ -328,7 +330,7 @@ Output:
  Way of the Dragon  |                  |
 (16 rows)
 
-17. Use left join to select the first and last names of all British directors and the names and age certificates of the movies that they directed.
+18. Use left join to select the first and last names of all British directors and the names and age certificates of the movies that they directed.
 Query;
 moviedb=# select first_name, last_name, movie_name, age_certificate from directors left join movies on directors.director_id = movies.director_id where nationality = 'British';
 
@@ -344,7 +346,7 @@ Output:
  Tony       | Scott     | Top Gun                                    | 12
 (7 rows)
 
-18. Count the number of movies that each director has directed.
+19. Count the number of movies that each director has directed.
 Query:
 moviedb=# select first_name, last_name, count(movie_id) from movies, directors where directors.director_id = movies.director_id group by directors.director_id;
 
@@ -390,7 +392,7 @@ Output:
  Victor     | Fleming                  |     2
 (37 rows)
 
-19. Select the first names, last names and dates of birth from directors & actors table. Order the result by the date of birth.
+20. Select the first names, last names and dates of birth from directors & actors table. Order the result by the date of birth.
 Query:
 moviedb=# select first_name, last_name, date_of_birth from directors union select first_name, last_name, date_of_birth from actors order by date_of_birth;
 
@@ -416,7 +418,7 @@ Output:
  Xian       | Gao                      |
 (182 rows)
 
-20. Select the first and last names of all directprs and actors born in the 1960s. Order the result by last name.
+21. Select the first and last names of all directprs and actors born in the 1960s. Order the result by last name.
 Query:
 moviedb=# select first_name, last_name from directors where date_of_birth between '1960-01-01' and '1969-12-31' union select first_name, last_name from actors where date_of_birth between '1960-01-01' and '1969-12-31' order by last_name;
 
@@ -464,4 +466,3 @@ Output:
  Michelle   | Yeoh
  Billy      | Zane
 (40 rows)
-                         
